@@ -44,6 +44,9 @@ src/
       page.tsx                   # Paste view / tombstone (Server Component)
       edit/
         page.tsx                 # Edit form (Server Component, ownership-gated)
+    auth/
+      login/page.tsx             # Login form (Client Component)
+      register/page.tsx          # Registration form (Client Component)
     components/
       PasteForm.tsx              # Client component — create/edit form
       DeleteButton.tsx           # Client component — delete with confirmation
@@ -67,6 +70,7 @@ docs/
 - **Imports:** Use `@/` alias for `src/` paths. Auth import from root uses relative path (depth varies by file location, e.g. `../../../auth` from `[slug]/page.tsx`).
 - **Error handling in API routes:** Prisma `PrismaClientKnownRequestError` with `error.code === "P2002"` for unique constraint violations.
 - **Cookie spec for anon-session:** HttpOnly, Secure, SameSite=Lax, Max-Age=604800, Path=/.
+- **Paste claiming:** On login (Auth.js `signIn` callback) and registration (register route), anonymous pastes matching `anon-session` are transferred to the authenticated user and the cookie is cleared.
 
 ## Commands
 

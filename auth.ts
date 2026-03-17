@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { cookies } from "next/headers";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   providers: [
@@ -31,6 +32,29 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   callbacks: {
+    async signIn({ user }) {
+      // Claim anonymous pastes on login
+      if (user.id) {
+        try {
+          const cookieStore = await cookies();
+          const anonSessionId = cookieStore.get("anon-session")?.value;
+          if (anonSessionId) {
+            await prisma.paste.updateMany({
+              where: { sessionOwnerId: anonSessionId },
+              data: {
+                userId: user.id,
+                sessionOwnerId: null,
+                claimToken: null,
+              },
+            });
+            cookieStore.delete("anon-session");
+          }
+        } catch {
+          // Don't block login if claiming fails
+        }
+      }
+      return true;
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
