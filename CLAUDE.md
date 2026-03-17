@@ -51,6 +51,8 @@ src/
         register/route.ts        # POST registration
       pastes/
         route.ts                 # POST paste creation
+        [slug]/
+          route.ts               # PATCH edit, DELETE paste
 docs/
   architecture.md                # Full architecture spec
   prd.md                         # Product requirements
