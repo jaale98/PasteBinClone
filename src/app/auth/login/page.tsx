@@ -78,15 +78,25 @@ export default function LoginPage() {
           </button>
           {error && <p className="text-sm text-red-500">{error}</p>}
         </form>
-        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/auth/register"
-            className="text-zinc-900 underline dark:text-zinc-100"
-          >
-            Register
-          </Link>
-        </p>
+        <div className="mt-4 flex flex-col gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <p>
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/auth/register"
+              className="text-zinc-900 underline dark:text-zinc-100"
+            >
+              Register
+            </Link>
+          </p>
+          <p>
+            <Link
+              href="/auth/forgot-password"
+              className="text-zinc-900 underline dark:text-zinc-100"
+            >
+              Forgot password?
+            </Link>
+          </p>
+        </div>
       </main>
     </div>
   );

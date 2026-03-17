@@ -38,6 +38,7 @@ src/
   lib/
     db.ts                        # Prisma singleton
     anon-session.ts              # Anonymous session cookie helpers
+    email.ts                     # Resend email helper (password reset)
   app/
     page.tsx                     # Home — paste creation form
     [slug]/
@@ -49,6 +50,8 @@ src/
     auth/
       login/page.tsx             # Login form (Client Component)
       register/page.tsx          # Registration form (Client Component)
+      forgot-password/page.tsx   # Request password reset (Client Component)
+      reset-password/page.tsx    # Set new password with token (Client Component)
     components/
       PasteForm.tsx              # Client component — create/edit form
       DeleteButton.tsx           # Client component — delete with confirmation
@@ -56,6 +59,8 @@ src/
       auth/
         [...nextauth]/route.ts   # Auth.js handlers
         register/route.ts        # POST registration
+        forgot-password/route.ts # POST initiate reset (sends email via Resend)
+        reset-password/route.ts  # POST complete reset (validates token, updates password)
       pastes/
         route.ts                 # POST paste creation
         [slug]/
