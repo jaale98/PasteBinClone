@@ -40,8 +40,11 @@ src/
     anon-session.ts              # Anonymous session cookie helpers
   app/
     page.tsx                     # Home — paste creation form
+    [slug]/
+      page.tsx                   # Paste view / tombstone (Server Component)
     components/
       PasteForm.tsx              # Client component — create/edit form
+      DeleteButton.tsx           # Client component — delete with confirmation
     api/
       auth/
         [...nextauth]/route.ts   # Auth.js handlers
@@ -57,7 +60,7 @@ docs/
 
 - **API routes** handle all mutations. Server Components do read-only DB queries directly.
 - **Client components** use `"use client"` directive and fetch API routes. Server components are the default.
-- **Imports:** Use `@/` alias for `src/` paths. Auth import from root uses relative path (`../../../../auth`).
+- **Imports:** Use `@/` alias for `src/` paths. Auth import from root uses relative path (depth varies by file location, e.g. `../../../auth` from `[slug]/page.tsx`).
 - **Error handling in API routes:** Prisma `PrismaClientKnownRequestError` with `error.code === "P2002"` for unique constraint violations.
 - **Cookie spec for anon-session:** HttpOnly, Secure, SameSite=Lax, Max-Age=604800, Path=/.
 
