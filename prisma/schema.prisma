@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  pastes        Paste[]
+}
+
+model Paste {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String?
+  content          String    // plain text, max 512KB enforced at API layer
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  expiresAt        DateTime?
+
+  // Ownership — one of these is set, never both
+  userId           String?
+  User             User?     @relation(fields: [userId], references: [id])
+  sessionOwnerId   String?   // anonymous session ID
+
+  claimToken       String?   @unique  // null after claimed or for authenticated pastes
+
+  historyPublic    Boolean   @default(false)
+
+  versions         PasteVersion[]
+
+  @@index([slug])
+  @@index([userId])
+  @@index([sessionOwnerId])
+  @@index([expiresAt])    // for cleanup job queries
+}
+
+model PasteVersion {
+  id        String   @id @default(cuid())
+  pasteId   String
+  Paste     Paste    @relation(fields: [pasteId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  editorId  String?  // userId or session ID — nullable (initial creation not versioned)
+
+  @@index([pasteId, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
