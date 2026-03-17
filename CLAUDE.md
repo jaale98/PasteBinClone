@@ -42,6 +42,8 @@ src/
     page.tsx                     # Home — paste creation form
     [slug]/
       page.tsx                   # Paste view / tombstone (Server Component)
+      edit/
+        page.tsx                 # Edit form (Server Component, ownership-gated)
     components/
       PasteForm.tsx              # Client component — create/edit form
       DeleteButton.tsx           # Client component — delete with confirmation
