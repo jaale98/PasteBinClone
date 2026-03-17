@@ -53,6 +53,11 @@ export default async function PasteViewPage({ params }: Props) {
     (session?.user?.id && paste.userId === session.user.id) ||
     (anonSessionId && paste.sessionOwnerId === anonSessionId);
 
+  const showHistory = paste.historyPublic || isOwner;
+  const versionCount = showHistory
+    ? await prisma.pasteVersion.count({ where: { pasteId: paste.id } })
+    : 0;
+
   return (
     <div className="flex min-h-screen items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
       <main className="w-full max-w-2xl">
@@ -102,6 +107,18 @@ export default async function PasteViewPage({ params }: Props) {
         <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded border border-zinc-200 bg-white p-4 font-mono text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100">
           {paste.content}
         </pre>
+
+        {/* Version history link */}
+        {showHistory && versionCount > 0 && (
+          <div className="mt-3">
+            <a
+              href={`/${slug}/versions`}
+              className="text-sm text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+            >
+              {versionCount} {versionCount === 1 ? "version" : "versions"}
+            </a>
+          </div>
+        )}
       </main>
     </div>
   );

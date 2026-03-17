@@ -44,6 +44,8 @@ src/
       page.tsx                   # Paste view / tombstone (Server Component)
       edit/
         page.tsx                 # Edit form (Server Component, ownership-gated)
+      versions/
+        page.tsx                 # Version history (Server Component, visibility-gated)
     auth/
       login/page.tsx             # Login form (Client Component)
       register/page.tsx          # Registration form (Client Component)
