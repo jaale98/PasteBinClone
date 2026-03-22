@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import TurnstileWidget from "./TurnstileWidget";
 
 const EXPIRY_OPTIONS = [
   { value: "", label: "Never" },
@@ -36,13 +37,72 @@ export default function PasteForm({
   const router = useRouter();
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [pendingBody, setPendingBody] = useState<Record<string, unknown> | null>(null);
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+  const [pendingMethod, setPendingMethod] = useState<string>("POST");
 
   const isEdit = mode === "edit";
+
+  async function submitRequest(
+    url: string,
+    method: string,
+    body: Record<string, unknown>,
+    turnstileToken?: string
+  ) {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (turnstileToken) {
+      headers["X-Turnstile-Token"] = turnstileToken;
+    }
+
+    const res = await fetch(url, {
+      method,
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (res.status === 429) {
+      const data = await res.json();
+      if (data.captchaRequired) {
+        setPendingBody(body);
+        setPendingUrl(url);
+        setPendingMethod(method);
+        setShowCaptcha(true);
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || "Something went wrong");
+      setSubmitting(false);
+      return;
+    }
+
+    const data = await res.json();
+    router.push(data.url || `/${data.slug}`);
+  }
+
+  const handleTurnstileVerify = useCallback(
+    async (token: string) => {
+      if (!pendingBody || !pendingUrl) return;
+      setShowCaptcha(false);
+      setSubmitting(true);
+      setError("");
+      await submitRequest(pendingUrl, pendingMethod, pendingBody, token);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pendingBody, pendingUrl, pendingMethod]
+  );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setSubmitting(true);
+    setShowCaptcha(false);
 
     const form = e.currentTarget;
     const formData = new FormData(form);
@@ -72,41 +132,13 @@ export default function PasteForm({
           body.historyPublic = formData.get("historyPublic") === "on";
         }
 
-        const res = await fetch(`/api/pastes/${slug}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-
-        if (!res.ok) {
-          const data = await res.json();
-          setError(data.error || "Something went wrong");
-          setSubmitting(false);
-          return;
-        }
-
-        const data = await res.json();
-        router.push(data.url);
+        await submitRequest(`/api/pastes/${slug}`, "PATCH", body);
       } else {
-        const res = await fetch("/api/pastes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            content,
-            title: title || undefined,
-            expiry: expiry || undefined,
-          }),
+        await submitRequest("/api/pastes", "POST", {
+          content,
+          title: title || undefined,
+          expiry: expiry || undefined,
         });
-
-        if (!res.ok) {
-          const data = await res.json();
-          setError(data.error || "Something went wrong");
-          setSubmitting(false);
-          return;
-        }
-
-        const { slug: newSlug } = await res.json();
-        router.push(`/${newSlug}`);
       }
     } catch {
       setError("Something went wrong");
@@ -203,6 +235,14 @@ export default function PasteForm({
           </a>
         )}
       </div>
+      {showCaptcha && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Rate limit reached. Please complete the CAPTCHA to continue.
+          </p>
+          <TurnstileWidget onVerify={handleTurnstileVerify} />
+        </div>
+      )}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </form>
   );
