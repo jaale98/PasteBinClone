@@ -11,6 +11,7 @@ model User {
   id            String   @id @default(cuid())
   email         String   @unique
   passwordHash  String
+  emailVerified Boolean  @default(false)
   createdAt     DateTime @default(now())
   pastes        Paste[]
 }
@@ -50,6 +51,14 @@ model PasteVersion {
   editorId  String?  // userId or session ID — nullable (initial creation not versioned)
 
   @@index([pasteId, createdAt])
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model PasswordResetToken {

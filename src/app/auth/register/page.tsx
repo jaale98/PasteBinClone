@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -39,7 +37,6 @@ export default function RegisterPage() {
     }
 
     try {
-      // Register the account
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,21 +50,7 @@ export default function RegisterPage() {
         return;
       }
 
-      // Auto-login after registration
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        // Account created but login failed — send them to login page
-        router.push("/auth/login");
-        return;
-      }
-
-      router.push("/");
-      router.refresh();
+      setRegistered(true);
     } catch {
       setError("Something went wrong");
       setSubmitting(false);
@@ -76,6 +59,30 @@ export default function RegisterPage() {
 
   const inputClass =
     "w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500";
+
+  if (registered) {
+    return (
+      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+        <main className="w-full max-w-sm">
+          <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+            Check your email
+          </h1>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            We&apos;ve sent a verification link to your email. Please click it
+            to activate your account. The link expires in 24 hours.
+          </p>
+          <p className="mt-4">
+            <Link
+              href="/auth/login"
+              className="text-sm text-zinc-900 underline dark:text-zinc-100"
+            >
+              Back to login
+            </Link>
+          </p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">

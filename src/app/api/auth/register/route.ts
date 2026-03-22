@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { PrismaClientKnownRequestError } from "@/generated/prisma/internal/prismaNamespace";
-import { getAnonSession } from "@/lib/anon-session";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -15,40 +16,45 @@ export async function POST(request: Request) {
     );
   }
 
+  if (typeof password !== "string" || password.length < 8) {
+    return NextResponse.json(
+      { error: "Password must be at least 8 characters" },
+      { status: 400 }
+    );
+  }
+
   const passwordHash = await hash(password, 12);
 
   try {
     const user = await prisma.user.create({
-      data: { email, passwordHash },
+      data: { email, passwordHash, emailVerified: false },
     });
 
-    // Claim anonymous pastes from the current session
-    const anonSessionId = await getAnonSession();
-    if (anonSessionId) {
-      await prisma.paste.updateMany({
-        where: { sessionOwnerId: anonSessionId },
-        data: {
-          userId: user.id,
-          sessionOwnerId: null,
-          claimToken: null,
-        },
-      });
+    // Generate verification token
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    await prisma.emailVerificationToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      },
+    });
+
+    const baseUrl = process.env.AUTH_URL || "http://localhost:3000";
+    const verifyUrl = `${baseUrl}/auth/verify-email?token=${token}`;
+
+    try {
+      await sendVerificationEmail(email, verifyUrl);
+    } catch {
+      // Don't block registration if email fails
     }
 
-    const response = NextResponse.json(
-      { id: user.id, email: user.email },
+    return NextResponse.json(
+      { message: "Account created. Please check your email to verify your account." },
       { status: 201 }
     );
-
-    // Clear the anon-session cookie after claiming
-    if (anonSessionId) {
-      response.headers.append(
-        "Set-Cookie",
-        "anon-session=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/"
-      );
-    }
-
-    return response;
   } catch (error) {
     if (
       error instanceof PrismaClientKnownRequestError &&

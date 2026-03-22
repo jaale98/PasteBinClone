@@ -11,10 +11,14 @@ export default function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendEmail, setResendEmail] = useState("");
+  const [resent, setResent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+    setNeedsVerification(false);
     setSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
@@ -34,13 +38,28 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password");
+      if (result.error.includes("EMAIL_NOT_VERIFIED")) {
+        setNeedsVerification(true);
+        setResendEmail(email);
+      } else {
+        setError("Invalid email or password");
+      }
       setSubmitting(false);
       return;
     }
 
     router.push(callbackUrl);
     router.refresh();
+  }
+
+  async function handleResendVerification() {
+    setResent(false);
+    await fetch("/api/auth/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: resendEmail }),
+    });
+    setResent(true);
   }
 
   const inputClass =
@@ -77,6 +96,26 @@ export default function LoginPage() {
             {submitting ? "Logging in..." : "Log in"}
           </button>
           {error && <p className="text-sm text-red-500">{error}</p>}
+          {needsVerification && (
+            <div className="rounded border border-yellow-300 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-950">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                Your email is not verified. Please check your inbox for the
+                verification link.
+              </p>
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                className="mt-2 text-sm font-medium text-yellow-900 underline dark:text-yellow-100"
+              >
+                Resend verification email
+              </button>
+              {resent && (
+                <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+                  Verification email sent.
+                </p>
+              )}
+            </div>
+          )}
         </form>
         <div className="mt-4 flex flex-col gap-2 text-sm text-zinc-500 dark:text-zinc-400">
           <p>

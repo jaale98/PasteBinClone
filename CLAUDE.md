@@ -50,15 +50,21 @@ src/
     auth/
       login/page.tsx             # Login form (Client Component)
       register/page.tsx          # Registration form (Client Component)
+      verify-email/page.tsx      # Email verification (Client Component)
       forgot-password/page.tsx   # Request password reset (Client Component)
       reset-password/page.tsx    # Set new password with token (Client Component)
     components/
       PasteForm.tsx              # Client component — create/edit form
       DeleteButton.tsx           # Client component — delete with confirmation
+      Header.tsx                 # Client component — navigation with auth state
+      Providers.tsx              # Client component — SessionProvider wrapper
+      TurnstileWidget.tsx        # Client component — Cloudflare Turnstile CAPTCHA
     api/
       auth/
         [...nextauth]/route.ts   # Auth.js handlers
-        register/route.ts        # POST registration
+        register/route.ts        # POST registration + send verification email
+        verify-email/route.ts    # POST verify email with token
+        resend-verification/route.ts # POST resend verification email
         forgot-password/route.ts # POST initiate reset (sends email via Resend)
         reset-password/route.ts  # POST complete reset (validates token, updates password)
       pastes/
