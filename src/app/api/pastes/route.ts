@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createId } from "@paralleldrive/cuid2";
+import { headers } from "next/headers";
 import { auth } from "../../../../auth";
 import { prisma } from "@/lib/db";
 import { getAnonSession, setAnonSessionCookie } from "@/lib/anon-session";
+import { anonPasteLimit, authPasteLimit } from "@/lib/rate-limit";
 
 const EXPIRY_OPTIONS: Record<string, number> = {
   "10m": 10 * 60 * 1000,
@@ -24,6 +26,22 @@ function generateSlug(): string {
 }
 
 export async function POST(request: Request) {
+  const session = await auth();
+
+  // Rate limiting
+  const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "127.0.0.1";
+  const { success } = session?.user?.id
+    ? await authPasteLimit.limit(session.user.id)
+    : await anonPasteLimit.limit(ip);
+
+  if (!success) {
+    return NextResponse.json(
+      { error: "rate_limited", captchaRequired: true },
+      { status: 429 }
+    );
+  }
+
   const body = await request.json();
   const { content, title, expiry } = body;
 
@@ -47,7 +65,6 @@ export async function POST(request: Request) {
       : null;
 
   const slug = generateSlug();
-  const session = await auth();
 
   let pasteData: {
     slug: string;
