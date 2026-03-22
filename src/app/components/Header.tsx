@@ -14,7 +14,7 @@ export default function Header() {
           href="/"
           className="text-lg font-semibold text-zinc-900 dark:text-zinc-100"
         >
-          Pastebin
+          Pastebin Clone
         </Link>
         <nav className="flex items-center gap-4">
           <Link

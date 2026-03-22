@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Pastebin clone — lightweight paste service with anonymous and authenticated paste creation, editing, deletion, expiry, version history, and paste claiming. See `docs/prd.md` and `docs/architecture.md` for full specs.
+Pastebin Clone — lightweight paste service with anonymous and authenticated paste creation, editing, deletion, expiry, version history, and paste claiming. See `docs/prd.md` and `docs/architecture.md` for full specs.
 
 ## Stack
 

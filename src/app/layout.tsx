@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pastebin",
+  title: "Pastebin Clone",
   description: "A lightweight paste service",
 };
 
