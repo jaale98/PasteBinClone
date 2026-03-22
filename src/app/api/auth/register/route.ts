@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { PrismaClientKnownRequestError } from "@/generated/prisma/runtime/library";
+import { PrismaClientKnownRequestError } from "@/generated/prisma/internal/prismaNamespace";
 import { getAnonSession } from "@/lib/anon-session";
 
 export async function POST(request: Request) {

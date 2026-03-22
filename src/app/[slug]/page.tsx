@@ -19,7 +19,7 @@ export default async function PasteViewPage({ params }: Props) {
 
   if (isExpired) {
     return (
-      <div className="flex min-h-screen items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
         <main className="w-full max-w-2xl">
           <div className="rounded border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900">
             {paste.title && (
@@ -59,7 +59,7 @@ export default async function PasteViewPage({ params }: Props) {
     : 0;
 
   return (
-    <div className="flex min-h-screen items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
       <main className="w-full max-w-2xl">
         {/* Header */}
         <div className="mb-4 flex items-start justify-between">
