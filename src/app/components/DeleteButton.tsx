@@ -31,7 +31,7 @@ export default function DeleteButton({ slug }: { slug: string }) {
     return (
       <button
         onClick={() => setConfirming(true)}
-        className="rounded border border-red-300 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+        className="rounded-full bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-500 transition-all hover:bg-red-100 active:scale-[0.97] dark:bg-red-950/40 dark:text-red-400 dark:hover:bg-red-900/40"
       >
         Delete
       </button>
@@ -42,7 +42,7 @@ export default function DeleteButton({ slug }: { slug: string }) {
     <button
       onClick={handleDelete}
       disabled={deleting}
-      className="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+      className="rounded-full bg-red-500 px-3.5 py-1.5 text-sm font-medium text-white shadow-sm shadow-red-200 transition-all hover:bg-red-600 hover:shadow-md active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 dark:shadow-none"
     >
       {deleting ? "Deleting..." : "Confirm Delete"}
     </button>

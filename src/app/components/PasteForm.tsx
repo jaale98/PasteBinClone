@@ -147,7 +147,7 @@ export default function PasteForm({
   }
 
   const inputClass =
-    "rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500";
+    "w-full rounded-xl bg-zinc-50 px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 ring-1 ring-zinc-200/80 transition-all focus:bg-white focus:ring-2 focus:ring-indigo-300 focus:outline-none dark:bg-zinc-800/40 dark:text-zinc-200 dark:placeholder-zinc-500 dark:ring-zinc-700/60 dark:focus:bg-zinc-800 dark:focus:ring-indigo-500/40";
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
@@ -164,16 +164,15 @@ export default function PasteForm({
         rows={16}
         required
         defaultValue={initialContent}
-        className={`${inputClass} font-mono`}
+        className={`${inputClass} p-4 font-mono leading-relaxed`}
       />
 
-      {/* Authenticated-only fields in edit mode */}
       {isEdit && isAuthenticated && (
         <>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <label
               htmlFor="customSlug"
-              className="text-sm text-zinc-600 dark:text-zinc-400"
+              className="text-sm font-medium text-zinc-500 dark:text-zinc-400"
             >
               Custom slug
             </label>
@@ -186,37 +185,45 @@ export default function PasteForm({
               className={inputClass}
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <label className="flex items-center gap-2.5 text-sm text-zinc-500 dark:text-zinc-400">
             <input
               type="checkbox"
               name="historyPublic"
               defaultChecked={initialHistoryPublic}
-              className="rounded border-zinc-300 dark:border-zinc-700"
+              className="h-4 w-4 rounded accent-indigo-500"
             />
             Make version history public
           </label>
         </>
       )}
 
-      <div className="flex items-center gap-4">
-        {/* Show expiry selector: always on create, only for auth users on edit */}
+      <div className="flex items-center gap-3 pt-2">
         {(!isEdit || isAuthenticated) && (
-          <select
-            name="expiry"
-            defaultValue={initialExpiry}
-            className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-          >
-            {EXPIRY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="expiry"
+              className="text-sm text-zinc-400 dark:text-zinc-500"
+            >
+              Expires in:
+            </label>
+            <select
+              id="expiry"
+              name="expiry"
+              defaultValue={initialExpiry}
+              className="rounded-xl bg-zinc-50 px-3 py-2.5 text-sm text-zinc-700 ring-1 ring-zinc-200/80 transition-all focus:ring-2 focus:ring-indigo-300 focus:outline-none dark:bg-zinc-800/40 dark:text-zinc-300 dark:ring-zinc-700/60 dark:focus:ring-indigo-500/40"
+            >
+              {EXPIRY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="rounded-full bg-indigo-500 px-6 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition-all hover:bg-indigo-600 hover:shadow-md hover:shadow-indigo-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 dark:shadow-none dark:hover:bg-indigo-400"
         >
           {submitting
             ? isEdit
@@ -229,21 +236,25 @@ export default function PasteForm({
         {isEdit && (
           <a
             href={`/${slug}`}
-            className="text-sm text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+            className="rounded-full px-4 py-2.5 text-sm text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
           >
             Cancel
           </a>
         )}
       </div>
       {showCaptcha && (
-        <div className="flex flex-col gap-2">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="flex flex-col gap-2 rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-200/60 dark:bg-amber-950/30 dark:ring-amber-800/40">
+          <p className="text-sm text-amber-600 dark:text-amber-400">
             Rate limit reached. Please complete the CAPTCHA to continue.
           </p>
           <TurnstileWidget onVerify={handleTurnstileVerify} />
         </div>
       )}
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && (
+        <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-500 ring-1 ring-red-100 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-900/30">
+          {error}
+        </p>
+      )}
     </form>
   );
 }

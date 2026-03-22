@@ -13,22 +13,24 @@ export default function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center px-4 py-16">
         <main className="w-full max-w-sm">
-          <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-            Invalid link
-          </h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            This reset link is invalid. Please request a new one.
-          </p>
-          <p className="mt-4">
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-zinc-900 underline dark:text-zinc-100"
-            >
-              Request new reset link
-            </Link>
-          </p>
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-800/60">
+            <h1 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+              Invalid link
+            </h1>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">
+              This reset link is invalid. Please request a new one.
+            </p>
+            <p className="mt-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-indigo-500 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-600 hover:decoration-indigo-300 dark:decoration-indigo-800 dark:hover:decoration-indigo-600"
+              >
+                Request new reset link
+              </Link>
+            </p>
+          </div>
         </main>
       </div>
     );
@@ -78,63 +80,71 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+      <div className="flex min-h-[calc(100vh-57px)] items-start justify-center px-4 py-16">
         <main className="w-full max-w-sm">
-          <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-            Password reset
-          </h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Your password has been updated. You can now log in with your new
-            password.
-          </p>
-          <p className="mt-4">
-            <Link
-              href="/auth/login"
-              className="text-sm text-zinc-900 underline dark:text-zinc-100"
-            >
-              Log in
-            </Link>
-          </p>
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-800/60">
+            <h1 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+              Password reset
+            </h1>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">
+              Your password has been updated. You can now log in with your new
+              password.
+            </p>
+            <p className="mt-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+              <Link
+                href="/auth/login"
+                className="text-sm text-indigo-500 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-600 hover:decoration-indigo-300 dark:decoration-indigo-800 dark:hover:decoration-indigo-600"
+              >
+                Log in
+              </Link>
+            </p>
+          </div>
         </main>
       </div>
     );
   }
 
   const inputClass =
-    "w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500";
+    "w-full rounded-xl bg-zinc-50 px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 ring-1 ring-zinc-200/80 transition-all focus:bg-white focus:ring-2 focus:ring-indigo-300 focus:outline-none dark:bg-zinc-800/40 dark:text-zinc-200 dark:placeholder-zinc-500 dark:ring-zinc-700/60 dark:focus:bg-zinc-800 dark:focus:ring-indigo-500/40";
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center px-4 py-16">
       <main className="w-full max-w-sm">
-        <h1 className="mb-6 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-          Set new password
-        </h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="password"
-            name="password"
-            placeholder="New password"
-            required
-            autoComplete="new-password"
-            className={inputClass}
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm new password"
-            required
-            autoComplete="new-password"
-            className={inputClass}
-          />
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
-          >
-            {submitting ? "Resetting..." : "Reset password"}
-          </button>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-        </form>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-800/60">
+          <h1 className="mb-6 text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+            Set new password
+          </h1>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input
+              type="password"
+              name="password"
+              placeholder="New password"
+              required
+              autoComplete="new-password"
+              className={inputClass}
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm new password"
+              required
+              autoComplete="new-password"
+              className={inputClass}
+            />
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full bg-indigo-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-200 transition-all hover:bg-indigo-600 hover:shadow-md hover:shadow-indigo-200 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 dark:shadow-none dark:hover:bg-indigo-400"
+            >
+              {submitting ? "Resetting..." : "Reset password"}
+            </button>
+            {error && (
+              <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-500 ring-1 ring-red-100 dark:bg-red-950/30 dark:text-red-400 dark:ring-red-900/30">
+                {error}
+              </p>
+            )}
+          </form>
+        </div>
       </main>
     </div>
   );

@@ -8,7 +8,19 @@
       "Bash(openssl rand:*)",
       "Bash(npm install:*)",
       "Bash(npx prisma:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(git push:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(mkdir -p /Users/jackalessi/Place/PasteBinClone/src/app/auth/login)",
+      "Bash(mkdir -p /Users/jackalessi/Place/PasteBinClone/src/app/auth/register)",
+      "Bash(node -e \"try { require\\(''resend''\\); console.log\\(''resend: ok''\\) } catch\\(e\\) { console.log\\(''resend: missing''\\) }\")",
+      "Bash(node -e \"try { require\\(''crypto''\\); console.log\\(''crypto: ok''\\) } catch\\(e\\) { console.log\\(''crypto: missing''\\) }\")",
+      "Bash(npm run:*)",
+      "Bash(node:*)"
     ]
   }
 }

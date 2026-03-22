@@ -39,49 +39,51 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center px-4 py-16">
       <main className="w-full max-w-sm">
-        {status === "loading" && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Verifying your email...
-          </p>
-        )}
-        {status === "success" && (
-          <>
-            <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Email verified
-            </h1>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Your email has been verified. You can now log in.
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-800/60">
+          {status === "loading" && (
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">
+              Verifying your email...
             </p>
-            <p className="mt-4">
-              <Link
-                href="/auth/login"
-                className="text-sm text-zinc-900 underline dark:text-zinc-100"
-              >
-                Log in
-              </Link>
-            </p>
-          </>
-        )}
-        {status === "error" && (
-          <>
-            <h1 className="mb-4 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-              Verification failed
-            </h1>
-            <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
-              {errorMessage}
-            </p>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              <Link
-                href="/auth/login"
-                className="text-zinc-900 underline dark:text-zinc-100"
-              >
-                Back to login
-              </Link>
-            </p>
-          </>
-        )}
+          )}
+          {status === "success" && (
+            <>
+              <h1 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+                Email verified
+              </h1>
+              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+                Your email has been verified. You can now log in.
+              </p>
+              <p className="mt-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+                <Link
+                  href="/auth/login"
+                  className="text-sm text-indigo-500 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-600 hover:decoration-indigo-300 dark:decoration-indigo-800 dark:hover:decoration-indigo-600"
+                >
+                  Log in
+                </Link>
+              </p>
+            </>
+          )}
+          {status === "error" && (
+            <>
+              <h1 className="mb-4 text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+                Verification failed
+              </h1>
+              <p className="mb-4 text-sm text-zinc-400 dark:text-zinc-500">
+                {errorMessage}
+              </p>
+              <p className="border-t border-zinc-100 pt-5 text-sm dark:border-zinc-800">
+                <Link
+                  href="/auth/login"
+                  className="text-indigo-500 underline decoration-indigo-200 underline-offset-2 hover:text-indigo-600 hover:decoration-indigo-300 dark:decoration-indigo-800 dark:hover:decoration-indigo-600"
+                >
+                  Back to login
+                </Link>
+              </p>
+            </>
+          )}
+        </div>
       </main>
     </div>
   );

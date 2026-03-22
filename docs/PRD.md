@@ -42,7 +42,8 @@ A lightweight pastebin service allowing any visitor to create and view plain-tex
 ### Authentication
 
 - Email and password only (v1).
-- Standard flows: register, login, logout, password reset via email.
+- Standard flows: register, email verification, login, logout, password reset via email.
+- Email verification required before login is permitted. On registration, a verification email is sent via Resend. Unverified accounts cannot authenticate.
 - Sessions managed server-side with secure, HttpOnly cookies.
 
 ---

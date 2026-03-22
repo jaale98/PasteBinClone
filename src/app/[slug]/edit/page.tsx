@@ -14,7 +14,6 @@ export default async function EditPastePage({ params }: Props) {
   const paste = await prisma.paste.findUnique({ where: { slug } });
   if (!paste) notFound();
 
-  // Ownership check
   const session = await auth();
   const anonSessionId = await getAnonSession();
 
@@ -25,26 +24,29 @@ export default async function EditPastePage({ params }: Props) {
     redirect(`/${slug}`);
   }
 
-  // Expired pastes cannot be edited
   if (paste.expiresAt && paste.expiresAt < new Date()) {
     redirect(`/${slug}`);
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center bg-zinc-50 px-4 py-16 dark:bg-zinc-950">
+    <div className="flex min-h-[calc(100vh-57px)] items-start justify-center px-4 py-16">
       <main className="w-full max-w-2xl">
-        <h1 className="mb-6 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-          Edit Paste
-        </h1>
-        <PasteForm
-          mode="edit"
-          slug={slug}
-          initialTitle={paste.title ?? ""}
-          initialContent={paste.content}
-          initialSlug={slug}
-          initialHistoryPublic={paste.historyPublic}
-          isAuthenticated={isAuthOwner}
-        />
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
+            Edit Paste
+          </h1>
+        </div>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-800/60">
+          <PasteForm
+            mode="edit"
+            slug={slug}
+            initialTitle={paste.title ?? ""}
+            initialContent={paste.content}
+            initialSlug={slug}
+            initialHistoryPublic={paste.historyPublic}
+            isAuthenticated={isAuthOwner}
+          />
+        </div>
       </main>
     </div>
   );

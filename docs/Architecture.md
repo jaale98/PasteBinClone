@@ -154,7 +154,25 @@ Triggered at login and registration:
 
 This runs as part of the Auth.js `signIn` callback or in the registration route handler before returning the response.
 
-### 4.4 Password Reset Flow
+### 4.4 Email Verification Flow
+
+1. User registers → server creates account with `emailVerified = false`, generates a verification token (random 32 bytes, hex-encoded), stores a SHA-256 hash in an `EmailVerificationToken` table with 24h TTL.
+2. Resend delivers an email with a verification link containing the token.
+3. User clicks link → server verifies token against stored hash, checks expiry, sets `emailVerified = true` on the User row, deletes the token.
+4. Login is blocked until `emailVerified = true` — the Auth.js `authorize` callback checks this field.
+5. If the token expires, the user can request a new one from the login page (resend verification link).
+
+```prisma
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+```
+
+### 4.5 Password Reset Flow
 
 1. User submits email → server generates a short-lived signed token (JWT, 1h TTL), stores a hash in a `PasswordResetToken` table.
 2. Resend delivers an email with the reset link containing the token.
@@ -182,7 +200,9 @@ All data mutations go through Next.js Route Handlers (`app/api/`). Server Compon
 | POST | `/api/pastes` | No | Create paste |
 | PATCH | `/api/pastes/[slug]` | Session or account | Edit paste content, expiry, slug, history visibility |
 | DELETE | `/api/pastes/[slug]` | Session or account | Delete paste |
-| POST | `/api/auth/register` | No | Create account |
+| POST | `/api/auth/register` | No | Create account + send verification email |
+| POST | `/api/auth/verify-email` | No | Verify email with token |
+| POST | `/api/auth/resend-verification` | No | Resend verification email |
 | POST | `/api/auth/[...nextauth]` | — | Auth.js handler (login, logout, session) |
 | POST | `/api/auth/forgot-password` | No | Initiate password reset |
 | POST | `/api/auth/reset-password` | No | Complete password reset |
